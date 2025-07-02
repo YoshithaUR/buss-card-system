@@ -180,7 +180,7 @@ const LoginRegister = () => {
               onClick={() => alert("Forgot Password flow...")}
               className="text-yellow-200 hover:text-yellow-300 transition"
             >
-              Forgot Password?
+              forgot Password?
             </button>
           </div>
         )}
@@ -195,7 +195,7 @@ const LoginRegister = () => {
                   onClick={() => setIsLogin(false)}
                   className="text-blue-300 hover:text-blue-200 transition font-semibold"
                 >
-                  Register
+                  register
                 </button>
               </>
             ) : (
@@ -205,7 +205,7 @@ const LoginRegister = () => {
                   onClick={() => setIsLogin(true)}
                   className="text-blue-300 hover:text-blue-200 transition font-semibold"
                 >
-                  Login
+                  setIsLogin
                 </button>
               </>
             )}
