@@ -113,7 +113,7 @@ const English = () => {
                 : 'bg-black text-white hover:bg-gray-800'
             }`}
           >
-            Register
+            Create Your Account
           </a>
         </motion.div>
       </motion.div>

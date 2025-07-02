@@ -1,189 +1,219 @@
-import React, { useState } from 'react';
-import axiosInstance from '../../api/api';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import {
+  FaUser,
+  FaEnvelope,
+  FaLock,
+  FaUserGraduate,
+  FaMoon,
+  FaSun,
+  FaArrowLeft,
+} from "react-icons/fa";
 
-const EnglishReg = () => {
-  const [formData, setFormData] = useState({ name: '', email: '', password: '', address: '', district: '', startLocation: '', endLocation: '', category: '', hometown: '', image: null, age: '', school: '', gender: '', });
+const LoginRegister = () => {
+  const [isLogin, setIsLogin] = useState(true);
+  const [darkMode, setDarkMode] = useState(true);
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    role: "",
+  });
 
-  const districts = ['Colombo', 'Gampaha', 'Kandy', 'Galle', 'Jaffna'];
+  const toggleMode = () => setDarkMode(!darkMode);
 
-  const citiesByDistrict = {
-    'Colombo': ['Dehiwala', 'Nugegoda', 'Kollupitiya', 'Borella'],
-    'Gampaha': ['Negombo', 'Wattala', 'Ja-Ela', 'Kiribathgoda'],
-    'Kandy': ['Peradeniya', 'Katugastota', 'Nawalapitiya', 'Gampola'],
-    'Galle': ['Hikkaduwa', 'Unawatuna', 'Ahangama', 'Matara'],
-    'Jaffna': ['Chavakachcheri', 'Point Pedro', 'Karainagar', 'Nallur'],
-  };
+  const themeClasses = darkMode
+    ? "bg-black bg-opacity-70 text-white"
+    : "bg-white bg-opacity-80 text-gray-900";
 
-  const categories = ['School', 'University or College', 'Adults'];
-
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    if (name === 'image') {
-      setFormData((prev) => ({ ...prev, image: files[0] }));
-    } else {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value,
-        ...(name === 'district' ? { hometown: '' } : {}),
-      }));
-    }
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const form = e.target;
-    const formData = new FormData(form);
-    const formJson = Object.fromEntries(formData.entries());
-    postSubmit(formJson)
+    alert(JSON.stringify(formData, null, 2));
   };
 
-  const postSubmit = async (e) => {
-    const response = await axiosInstance.post('/register', e)
-    console.log(response)
-  }
-
-  const hometownOptions = formData.district ? citiesByDistrict[formData.district] : [];
-
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50 p-4">
-      <div className="bg-white rounded-2xl p-6 w-full max-w-3xl shadow-2xl relative overflow-y-auto max-h-[95vh] border-2 border-green-300">
-        <h2 className="text-3xl font-extrabold mb-6 text-center text-green-800 drop-shadow-sm">
-          Register Now
+    <div
+      className={`relative min-h-screen flex items-center justify-center px-4 transition duration-500 ${
+        darkMode ? "text-white" : "text-gray-800"
+      }`}
+      style={{
+        backgroundImage: "url('./gallery/home/Sri Lanka Transport Board (2).jpg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+      {/* Overlay */}
+      <div className={`absolute inset-0 z-0 ${themeClasses}`} />
+
+      {/* Theme Toggle */}
+      <button
+        onClick={toggleMode}
+        className="absolute top-4 right-4 z-20 p-2 rounded-full bg-white/30 backdrop-blur-md text-white hover:bg-white/40 transition"
+        title="Toggle Theme"
+      >
+        {darkMode ? <FaSun size={18} /> : <FaMoon size={18} />}
+      </button>
+
+      {/* Back Button */}
+      <button
+        onClick={() => window.history.back()}
+        className="absolute top-4 left-4 z-20 p-2 rounded-full bg-white/30 backdrop-blur-md text-white hover:bg-white/40 transition"
+        title="Go Back"
+      >
+        <FaArrowLeft size={18} />
+      </button>
+
+      {/* Form Card */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1 }}
+        className="relative z-10 w-full max-w-md bg-white/20 backdrop-blur-md p-6 sm:p-8 rounded-xl shadow-2xl"
+      >
+        <h2 className="text-2xl font-bold text-center mb-6 drop-shadow-lg">
+          {isLogin ? "Login to Continue" : "Create an Account"}
         </h2>
 
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {[
-            { label: 'Full Name', name: 'name', type: 'text' },
-            { label: 'Email', name: 'email', type: 'email' },
-            { label: 'Password', name: 'password', type: 'password' },
-            { label: 'Home Address', name: 'address', type: 'text' },
-            { label: 'Date of Birth', name: 'age', type: 'date' },
-            { label: 'School', name: 'school', type: 'text' },
-          ].map((field) => (
-            <div key={field.name}>
-              <label className="block text-sm font-semibold text-green-800 mb-1">{field.label}</label>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Username */}
+          {!isLogin && (
+            <div className="flex items-center gap-2 bg-white/30 px-4 py-2 rounded-lg">
+              <FaUser />
               <input
-                type={field.type}
-                name={field.name}
-                value={formData[field.name]}
-                onChange={handleChange}
-                className="w-full px-4 py-2 rounded-lg border border-green-400 focus:outline-none focus:ring-2 focus:ring-green-500 transition text-purple-700 placeholder-purple-400"
-                placeholder={`Enter ${field.label}`}
-                required={field.name !== 'address'}
+                type="text"
+                name="username"
+                placeholder="Username"
+                value={formData.username}
+                onChange={handleInputChange}
+                className="w-full bg-transparent outline-none placeholder:text-white"
+                required
               />
             </div>
-          ))}
+          )}
 
-          <div>
-            <label className="block text-sm font-semibold text-green-800 mb-1">District</label>
-            <select
-              name="district"
-              value={formData.district}
-              onChange={handleChange}
-              className="w-full px-4 py-2 rounded-lg border border-green-400 bg-gradient-to-r from-green-100 to-green-200 text-green-900 focus:outline-none focus:ring-2 focus:ring-green-500 transition"
-              required
-            >
-              <option value="">Select District</option>
-              {districts.map((d, i) => (
-                <option key={i} value={d}>{d}</option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-semibold text-green-800 mb-1">City</label>
-            <select
-              name="hometown"
-              value={formData.hometown}
-              onChange={handleChange}
-              className="w-full px-4 py-2 rounded-lg border border-green-400 bg-gradient-to-r from-green-100 to-green-200 text-green-900 focus:outline-none focus:ring-2 focus:ring-green-500 transition"
-              disabled={!formData.district}
-              required
-            >
-              <option value="">{formData.district ? "Select City" : "Please select a district first"}</option>
-              {hometownOptions.map((city, i) => (
-                <option key={i} value={city}>{city}</option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-semibold text-green-800 mb-1">Gender</label>
-            <div className="flex gap-4">
-              {['Male', 'Female', 'Other'].map((g) => (
-                <label key={g} className="flex items-center space-x-2 text-green-700">
-                  <input
-                    type="radio"
-                    name="gender"
-                    value={g}
-                    checked={formData.gender === g}
-                    onChange={handleChange}
-                    className="text-green-600"
-                    required
-                  />
-                  <span>{g}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-semibold text-green-800 mb-1">Upload Your Image</label>
+          {/* Email */}
+          <div className="flex items-center gap-2 bg-white/30 px-4 py-2 rounded-lg">
+            <FaEnvelope />
             <input
-              type="file"
-              name="image"
-              accept="image/*"
-              onChange={handleChange}
-              className="w-full px-4 py-2 rounded-lg border border-green-400 bg-white text-green-700 file:bg-green-100 file:border file:border-green-300 file:rounded file:px-2 focus:outline-none focus:ring-2 focus:ring-green-500 transition"
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={handleInputChange}
+              className="w-full bg-transparent outline-none placeholder:text-white"
+              required
             />
           </div>
 
-          <div className="md:col-span-2 flex flex-col md:flex-row gap-4">
-            {['startLocation', 'endLocation'].map((loc, idx) => (
-              <div className="w-full" key={loc}>
-                <label className="block text-sm font-semibold text-green-800 mb-1">
-                  {idx === 0 ? 'Start Location' : 'End Location'}
-                </label>
-                <input
-                  type="text"
-                  name={loc}
-                  value={formData[loc]}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 rounded-lg border border-green-400 text-blue-800 placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-green-500 transition"
-                  placeholder={`Enter ${idx === 0 ? 'start' : 'end'} location`}
-                />
-              </div>
-            ))}
-          </div>
-
-          <div className="md:col-span-2">
-            <label className="block text-sm font-semibold text-green-800 mb-1">Select Your Category</label>
-            <select
-              name="category"
-              value={formData.category}
-              onChange={handleChange}
-              className="w-full px-4 py-2 rounded-lg border border-green-400 bg-gradient-to-r from-yellow-100 to-yellow-200 text-yellow-900 focus:outline-none focus:ring-2 focus:ring-yellow-400 transition"
+          {/* Password */}
+          <div className="flex items-center gap-2 bg-white/30 px-4 py-2 rounded-lg">
+            <FaLock />
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleInputChange}
+              className="w-full bg-transparent outline-none placeholder:text-white"
               required
-            >
-              <option value="">Select</option>
-              {categories.map((c, i) => (
-                <option key={i} value={c}>{c}</option>
-              ))}
-            </select>
+            />
           </div>
 
-          <div className="md:col-span-2">
+          {/* Confirm Password */}
+          {!isLogin && (
+            <div className="flex items-center gap-2 bg-white/30 px-4 py-2 rounded-lg">
+              <FaLock />
+              <input
+                type="password"
+                name="confirmPassword"
+                placeholder="Confirm Password"
+                value={formData.confirmPassword}
+                onChange={handleInputChange}
+                className="w-full bg-transparent outline-none placeholder:text-white"
+                required
+              />
+            </div>
+          )}
+
+          {/* Role Dropdown */}
+          {!isLogin && (
+            <div className="flex items-center gap-2 bg-white/30 px-4 py-2 rounded-lg">
+              <FaUserGraduate />
+              <select
+                name="role"
+                value={formData.role}
+                onChange={handleInputChange}
+                className="w-full bg-transparent outline-none text-white"
+                required
+              >
+                <option value="" className="text-black">Select Role</option>
+                <option value="School Student" className="text-black">School Student</option>
+                <option value="University or Technical Student" className="text-black">University or Technical Student</option>
+                <option value="Adult" className="text-black">Adult</option>
+              </select>
+            </div>
+          )}
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            className={`w-full py-2.5 rounded-full font-bold transition-all duration-300 ${
+              darkMode
+                ? "bg-yellow-300 text-black hover:bg-yellow-400"
+                : "bg-blue-600 text-white hover:bg-blue-700"
+            } hover:scale-105`}
+          >
+            {isLogin ? "Login" : "Register"}
+          </button>
+        </form>
+
+        {/* Forgot Password */}
+        {isLogin && (
+          <div className="mt-3 text-right text-sm">
             <button
-              type="submit"
-              className="w-full bg-gradient-to-r from-green-500 to-green-700 hover:from-green-600 hover:to-green-800 text-white font-bold py-3 px-4 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105"
+              onClick={() => alert("Forgot Password flow...")}
+              className="text-yellow-200 hover:text-yellow-300 transition"
             >
-              Submit
+              Forgot Password?
             </button>
           </div>
-        </form>
-      </div>
+        )}
+
+        {/* Bottom Switch */}
+        <div className="mt-6 border-t border-white/30 pt-4 text-center">
+          <span className="text-sm">
+            {isLogin ? (
+              <>
+                Don’t have an account?{" "}
+                <button
+                  onClick={() => setIsLogin(false)}
+                  className="text-blue-300 hover:text-blue-200 transition font-semibold"
+                >
+                  Register
+                </button>
+              </>
+            ) : (
+              <>
+                Already have an account?{" "}
+                <button
+                  onClick={() => setIsLogin(true)}
+                  className="text-blue-300 hover:text-blue-200 transition font-semibold"
+                >
+                  Login
+                </button>
+              </>
+            )}
+          </span>
+        </div>
+      </motion.div>
     </div>
   );
 };
 
-export default EnglishReg;
+export default LoginRegister;
